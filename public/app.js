@@ -43,6 +43,9 @@ const db = getFirestore(app);
 // Configurar persistencia
 setPersistence(auth, browserLocalPersistence);
 
+// CONFIGURACIÓN DEL BACKEND
+const BACKEND_URL = 'cambiatuyo-production.up.railway.app'; // ← CAMBIAR POR TU URL REAL
+
 // Variables globales
 let currentUser = null;
 let isAdmin = false;
@@ -1213,16 +1216,39 @@ function addMessage(type, text) {
 }
 
 // ========================================
-// LLAMADA A CLAUDE API (SIMULADA)
+// LLAMADA A CLAUDE API 
 // ========================================
 async function callClaudeAPI(systemPrompt, conversationHistory) {
-  // SIMULACIÓN - Reemplazar con backend real
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(`Como ${currentAgent.name}, te respondo con sabiduría sobre tu consulta. [Esta es una simulación - implementa tu backend para usar Claude API]`);
-    }, 2000);
-  });
-}
+  try {
+    const token = await auth.currentUser.getIdToken();
+    
+    const response = await fetch(`${BACKEND_URL}/api/chat`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        systemPrompt,
+        messages: conversationHistory.slice(1),
+        agentId: currentAgent.id,
+        agentName: currentAgent.name
+      })
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Error en la consulta');
+    }
+    
+    const data = await response.json();
+    return data.response;
+    
+  } catch (error) {
+    console.error('Error llamando al backend:', error);
+    throw error;
+  }
+
 
 // ========================================
 // GUARDAR CONSULTA
@@ -1539,21 +1565,29 @@ window.toggleAgentBonus = async function(userId, agentId, addBonus) {
 };
 
 window.deleteUser = async function(userId, email) {
-  if (!confirm(`¿Borrar usuario ${email}?`)) return;
+  if (!confirm(`¿Eliminar a ${email}?\n\nPodrá registrarse nuevamente.`)) {
+    return;
+  }
   
   try {
-    await deleteDoc(doc(db, 'users', userId));
+    const token = await auth.currentUser.getIdToken();
     
-    const consultationsQuery = query(collection(db, 'consultations'), where('userId', '==', userId));
-    const consultationsSnap = await getDocs(consultationsQuery);
-    const deletePromises = [];
-    consultationsSnap.forEach(doc => {
-      deletePromises.push(deleteDoc(doc.ref));
+    const response = await fetch(`${BACKEND_URL}/api/admin/users/${userId}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
     });
-    await Promise.all(deletePromises);
     
-    showNotification('✅ Usuario eliminado', 'success');
-    loadAdmin();
+    const data = await response.json();
+    
+    if (response.ok) {
+      showNotification('✅ Usuario eliminado. Puede re-registrarse.', 'success');
+      loadAdmin();
+    } else {
+      throw new Error(data.message);
+    }
+    
   } catch (error) {
     console.error('Error:', error);
     showNotification('Error: ' + error.message, 'error');
