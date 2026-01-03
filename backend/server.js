@@ -19,7 +19,9 @@ app.use(cors({
 app.use(express.json());
 
 // Inicializar Firebase Admin SDK
-const serviceAccount = require('./serviceAccountKey.json');
+const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT 
+  ? JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)
+  : require('./serviceAccountKey.json');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
@@ -128,7 +130,7 @@ app.post('/api/chat', authenticateUser, async (req, res) => {
       model: 'claude-sonnet-4-20250514',
       max_tokens: 2000,
       system: systemPrompt,
-      messages: messages.filter(msg => msg.role !== 'assistant' || msg.content !== messages[0]?.content)
+      messages: messages
     });
     
     const assistantMessage = response.content[0].text;
@@ -242,7 +244,7 @@ app.get('/api/health', (req, res) => {
 });
 
 // ========================================
-// ENDPOINT: VERIFICAR CONFIGURACIÓN
+// ENDPOINT: VERIFICAR CONFIGURACIÓN (SOLO ADMIN)
 // ========================================
 app.get('/api/config', authenticateUser, async (req, res) => {
   if (!req.isAdmin) {
@@ -252,7 +254,8 @@ app.get('/api/config', authenticateUser, async (req, res) => {
   res.json({
     anthropicKey: process.env.ANTHROPIC_API_KEY ? 'Configurado ✓' : 'No configurado ✗',
     frontendUrl: process.env.FRONTEND_URL || 'No configurado',
-    nodeEnv: process.env.NODE_ENV || 'development'
+    nodeEnv: process.env.NODE_ENV || 'development',
+    firebaseConfigured: !!serviceAccount
   });
 });
 
@@ -268,6 +271,7 @@ app.listen(PORT, () => {
   console.log(`📡 Puerto: ${PORT}`);
   console.log(`🌐 Entorno: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🔑 Anthropic API: ${process.env.ANTHROPIC_API_KEY ? 'Configurado ✓' : 'NO CONFIGURADO ✗'}`);
+  console.log(`🔥 Firebase: ${serviceAccount ? 'Configurado ✓' : 'NO CONFIGURADO ✗'}`);
   console.log('🔮 ================================');
 });
 
