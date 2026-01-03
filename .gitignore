@@ -4,6 +4,3 @@ backend/node_modules/
 backend/.env
 serviceAccountKey.json
 backend/serviceAccountKey.json
-.DS_Store
-*.log
-.firebase/
