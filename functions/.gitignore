@@ -1,0 +1,3 @@
+node_modules/
+*.local
+.env serviceAccountKey.json node_modules/

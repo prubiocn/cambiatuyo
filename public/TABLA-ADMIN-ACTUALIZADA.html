@@ -1,0 +1,22 @@
+<!-- TABLA DE ADMIN ACTUALIZADA - Para index.html -->
+<!-- Buscar la tabla de usuarios en el panel de admin y reemplazar con esto -->
+
+<div class="bg-white/5 backdrop-blur-md rounded-2xl p-6 shadow-xl">
+  <h3 class="text-xl font-bold mb-4">Usuarios Registrados</h3>
+  <div class="overflow-x-auto">
+    <table class="w-full">
+      <thead>
+        <tr class="border-b border-purple-500/20">
+          <th class="py-3 px-6 text-left">Usuario</th>
+          <th class="py-3 px-6 text-left">Créditos</th>
+          <th class="py-3 px-6 text-left">Plan</th>
+          <th class="py-3 px-6 text-center">Verificado</th> <!-- ← NUEVA COLUMNA -->
+          <th class="py-3 px-6 text-right">Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="usersTable">
+        <!-- Dinámicamente poblado por app.js -->
+      </tbody>
+    </table>
+  </div>
+</div>

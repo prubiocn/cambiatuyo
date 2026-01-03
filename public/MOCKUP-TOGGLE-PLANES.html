@@ -1,0 +1,270 @@
+<!-- MOCKUP: SECCIÓN DE PLANES CON TOGGLE MENSUAL/ANUAL -->
+
+<section id="plansSection" class="container mx-auto px-4 py-12">
+  
+  <!-- HEADER CON TOGGLE -->
+  <div class="text-center mb-12">
+    <h2 class="text-4xl font-bold mb-4">Elige tu Plan Místico</h2>
+    <p class="text-gray-400 mb-8">Desbloquea todo el potencial de las artes místicas</p>
+    
+    <!-- TOGGLE MENSUAL/ANUAL -->
+    <div class="inline-flex items-center gap-3 bg-black/40 p-2 rounded-full border border-purple-500/30">
+      <button id="toggleMonthly" onclick="setBillingPeriod('monthly')" 
+              class="px-6 py-2 rounded-full transition-all font-semibold">
+        Mensual
+      </button>
+      <button id="toggleAnnual" onclick="setBillingPeriod('annual')" 
+              class="px-6 py-2 rounded-full transition-all font-semibold bg-purple-600">
+        Anual
+        <span class="ml-2 text-xs bg-green-500 text-white px-2 py-1 rounded-full">
+          💰 Ahorra 17%
+        </span>
+      </button>
+    </div>
+    
+    <p class="text-sm text-gray-400 mt-3">
+      💚 Con el plan anual obtienes 2 meses gratis
+    </p>
+  </div>
+
+  <!-- GRID DE PLANES -->
+  <div id="plansGrid" class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+    
+    <!-- PLAN BÁSICO -->
+    <div class="bg-gradient-to-br from-slate-800 to-purple-900 rounded-3xl p-8 border border-purple-500/20 hover:border-purple-500/50 transition-all">
+      <div class="text-5xl mb-4 text-center">✨</div>
+      <h3 class="text-2xl font-bold text-center mb-2">Básico</h3>
+      
+      <!-- PRECIO ANUAL (visible cuando toggle está en anual) -->
+      <div id="basicAnnualPrice" class="text-center mb-6">
+        <div class="text-4xl font-bold text-purple-400">€8.25</div>
+        <div class="text-gray-400">/mes</div>
+        <div class="text-sm text-gray-500 mt-1">€99 facturado anualmente</div>
+        <div class="mt-3 inline-block bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm">
+          💚 Ahorras €20.88
+        </div>
+      </div>
+      
+      <!-- PRECIO MENSUAL (oculto cuando toggle está en anual) -->
+      <div id="basicMonthlyPrice" class="text-center mb-6 hidden">
+        <div class="text-4xl font-bold text-purple-400">€9.99</div>
+        <div class="text-gray-400">/mes</div>
+        <div class="text-sm text-gray-500 mt-1">Facturado mensualmente</div>
+      </div>
+      
+      <!-- FEATURES -->
+      <ul class="space-y-3 mb-6">
+        <li class="flex items-start gap-2">
+          <span class="text-green-400 mt-1">✓</span>
+          <span class="text-gray-300">6 agentes místicos</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-green-400 mt-1">✓</span>
+          <span class="text-gray-300">20 consultas al mes</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-green-400 mt-1">✓</span>
+          <span class="text-gray-300">Astrología, Sueños, Ángeles</span>
+        </li>
+      </ul>
+      
+      <!-- BOTÓN -->
+      <button onclick="subscribeToPlan('basic', 'annual')" 
+              class="w-full bg-purple-600 hover:bg-purple-700 py-3 rounded-lg font-bold transition-all">
+        Suscribirse
+      </button>
+      
+      <p class="text-xs text-gray-500 text-center mt-3">
+        Cancela cuando quieras
+      </p>
+    </div>
+
+    <!-- PLAN MÍSTICO (MÁS POPULAR) -->
+    <div class="bg-gradient-to-br from-purple-800 to-pink-900 rounded-3xl p-8 border-4 border-purple-500 relative transform scale-105">
+      <!-- BADGE MÁS POPULAR -->
+      <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-purple-500 text-white px-4 py-1 rounded-full text-sm font-bold">
+        ⭐ MÁS POPULAR
+      </div>
+      
+      <div class="text-5xl mb-4 text-center">🔮</div>
+      <h3 class="text-2xl font-bold text-center mb-2">Místico</h3>
+      
+      <!-- PRECIO ANUAL -->
+      <div id="mysticAnnualPrice" class="text-center mb-6">
+        <div class="text-4xl font-bold text-purple-300">€16.58</div>
+        <div class="text-gray-300">/mes</div>
+        <div class="text-sm text-gray-400 mt-1">€199 facturado anualmente</div>
+        <div class="mt-3 inline-block bg-green-500/20 text-green-300 px-3 py-1 rounded-full text-sm font-semibold">
+          💚 Ahorras €40.88
+        </div>
+      </div>
+      
+      <!-- PRECIO MENSUAL -->
+      <div id="mysticMonthlyPrice" class="text-center mb-6 hidden">
+        <div class="text-4xl font-bold text-purple-300">€19.99</div>
+        <div class="text-gray-300">/mes</div>
+        <div class="text-sm text-gray-400 mt-1">Facturado mensualmente</div>
+      </div>
+      
+      <!-- FEATURES -->
+      <ul class="space-y-3 mb-6">
+        <li class="flex items-start gap-2">
+          <span class="text-green-300 mt-1">✓</span>
+          <span class="text-gray-200">9 agentes místicos</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-green-300 mt-1">✓</span>
+          <span class="text-gray-200">50 consultas al mes</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-green-300 mt-1">✓</span>
+          <span class="text-gray-200">I-Ching, Runas, Feng Shui</span>
+        </li>
+      </ul>
+      
+      <!-- BOTÓN -->
+      <button onclick="subscribeToPlan('mystic', 'annual')" 
+              class="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 py-3 rounded-lg font-bold transition-all shadow-lg">
+        Suscribirse
+      </button>
+      
+      <p class="text-xs text-gray-400 text-center mt-3">
+        Cancela cuando quieras
+      </p>
+    </div>
+
+    <!-- PLAN MAESTRO -->
+    <div class="bg-gradient-to-br from-yellow-800 to-orange-900 rounded-3xl p-8 border border-yellow-500/20 hover:border-yellow-500/50 transition-all">
+      <div class="text-5xl mb-4 text-center">👑</div>
+      <h3 class="text-2xl font-bold text-center mb-2">Maestro</h3>
+      
+      <!-- PRECIO ANUAL -->
+      <div id="masterAnnualPrice" class="text-center mb-6">
+        <div class="text-4xl font-bold text-yellow-400">€33.25</div>
+        <div class="text-gray-400">/mes</div>
+        <div class="text-sm text-gray-500 mt-1">€399 facturado anualmente</div>
+        <div class="mt-3 inline-block bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm font-semibold">
+          💚 Ahorras €80.88
+        </div>
+      </div>
+      
+      <!-- PRECIO MENSUAL -->
+      <div id="masterMonthlyPrice" class="text-center mb-6 hidden">
+        <div class="text-4xl font-bold text-yellow-400">€39.99</div>
+        <div class="text-gray-400">/mes</div>
+        <div class="text-sm text-gray-500 mt-1">Facturado mensualmente</div>
+      </div>
+      
+      <!-- FEATURES -->
+      <ul class="space-y-3 mb-6">
+        <li class="flex items-start gap-2">
+          <span class="text-green-400 mt-1">✓</span>
+          <span class="text-gray-300">TODOS los 11 agentes</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-green-400 mt-1">✓</span>
+          <span class="text-gray-300">Consultas ILIMITADAS</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-green-400 mt-1">✓</span>
+          <span class="text-gray-300">Cábala + Guía Espiritual</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-green-400 mt-1">✓</span>
+          <span class="text-gray-300">Prioridad VIP</span>
+        </li>
+      </ul>
+      
+      <!-- BOTÓN -->
+      <button onclick="subscribeToPlan('master', 'annual')" 
+              class="w-full bg-yellow-600 hover:bg-yellow-700 py-3 rounded-lg font-bold transition-all">
+        Suscribirse
+      </button>
+      
+      <p class="text-xs text-gray-500 text-center mt-3">
+        Cancela cuando quieras
+      </p>
+    </div>
+    
+  </div>
+  
+  <!-- FOOTER INFO -->
+  <div class="text-center mt-12">
+    <p class="text-gray-400 text-sm">
+      🔒 Pago seguro con Stripe • 🔄 Cambia o cancela cuando quieras • 💯 Garantía de satisfacción
+    </p>
+  </div>
+
+</section>
+
+<!-- JAVASCRIPT PARA TOGGLE -->
+<script>
+let currentBillingPeriod = 'annual'; // Por defecto anual (mejor conversión)
+
+function setBillingPeriod(period) {
+  currentBillingPeriod = period;
+  
+  // Actualizar estilos de botones
+  const monthlyBtn = document.getElementById('toggleMonthly');
+  const annualBtn = document.getElementById('toggleAnnual');
+  
+  if (period === 'monthly') {
+    monthlyBtn.classList.add('bg-purple-600');
+    monthlyBtn.classList.remove('bg-transparent');
+    annualBtn.classList.remove('bg-purple-600');
+    annualBtn.classList.add('bg-transparent');
+  } else {
+    annualBtn.classList.add('bg-purple-600');
+    annualBtn.classList.remove('bg-transparent');
+    monthlyBtn.classList.remove('bg-purple-600');
+    monthlyBtn.classList.add('bg-transparent');
+  }
+  
+  // Mostrar/ocultar precios
+  ['basic', 'mystic', 'master'].forEach(plan => {
+    const annualDiv = document.getElementById(`${plan}AnnualPrice`);
+    const monthlyDiv = document.getElementById(`${plan}MonthlyPrice`);
+    
+    if (period === 'annual') {
+      annualDiv.classList.remove('hidden');
+      monthlyDiv.classList.add('hidden');
+    } else {
+      monthlyDiv.classList.remove('hidden');
+      annualDiv.classList.add('hidden');
+    }
+  });
+}
+
+function subscribeToPlan(planId, billingPeriod) {
+  // Verificar autenticación
+  if (!currentUser) {
+    showAuthModal();
+    return;
+  }
+  
+  // Crear sesión de Stripe Checkout
+  // El precio depende del plan y período de facturación
+  console.log(`Suscribirse a plan: ${planId} - ${billingPeriod}`);
+  
+  // Aquí iría la integración con Stripe
+  // Redirigir a Stripe Checkout con el price ID correcto
+}
+</script>
+
+<!-- ESTILOS ADICIONALES -->
+<style>
+/* Animación suave al cambiar precios */
+.price-transition {
+  transition: all 0.3s ease;
+}
+
+/* Hacer que el plan popular se destaque */
+@keyframes pulse-border {
+  0%, 100% { border-color: rgba(168, 85, 247, 0.5); }
+  50% { border-color: rgba(168, 85, 247, 1); }
+}
+
+.scale-105:hover {
+  transform: scale(1.08);
+}
+</style>

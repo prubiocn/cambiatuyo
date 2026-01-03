@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CambiaTuYo - Portal Místico</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
+    
+    body { font-family: 'Poppins', sans-serif; }
+    h1, h2, h3 { font-family: 'Cinzel', serif; }
+    .agent-card:hover { transform: translateY(-5px); transition: 0.3s; }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white min-h-screen">
+  
+  <!-- HEADER -->
+  <header class="bg-black/30 backdrop-blur-md border-b border-purple-500/20 sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="text-4xl">🔮</div>
+          <h1 class="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+            CambiaTuYo
+          </h1>
+        </div>
+        
+        <nav class="hidden md:flex items-center gap-6">
+          <button onclick="showSection('home')" class="hover:text-purple-400 transition-colors">Inicio</button>
+          <button onclick="showSection('plans')" class="hover:text-purple-400 transition-colors">Planes</button>
+          <button id="adminNavBtn" onclick="showSection('admin')" class="hover:text-purple-400 transition-colors hidden">Admin</button>
+        </nav>
+        
+        <div class="flex items-center gap-4">
+          <div class="flex items-center gap-2 bg-purple-600/20 px-4 py-2 rounded-full">
+            <span class="text-2xl">💰</span>
+            <span class="font-bold text-lg" id="userCredits">60</span>
+          </div>
+          
+          <div id="authButtons" class="flex gap-2">
+            <button onclick="showAuthModal()" class="bg-purple-600 hover:bg-purple-700 px-6 py-2 rounded-full font-semibold transition-all">
+              Iniciar Sesión
+            </button>
+          </div>
+          
+          <div id="userMenu" class="hidden items-center gap-3">
+            <div class="text-right">
+              <div class="font-semibold" id="userName">Usuario</div>
+              <div class="text-xs text-gray-400" id="userEmail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f1949c90989db19489909c819d94df929e9c">[email&#160;protected]</a></div>
+            </div>
+            <button id="logoutBtn" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-full font-semibold transition-all">
+              Salir
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- SECCIÓN HOME -->
+  <section id="homeSection" class="container mx-auto px-4 py-12">
+    <div class="text-center mb-16">
+      <h2 class="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
+        Bienvenido al Portal Místico
+      </h2>
+      <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+        Conecta con 11 agentes místicos especializados para guiarte en tu camino espiritual
+      </p>
+    </div>
+    
+    <div id="agentsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- Agentes se renderizan aquí -->
+    </div>
+  </section>
+
+  <!-- SECCIÓN CHAT -->
+  <section id="chatSection" class="hidden container mx-auto px-4 py-12">
+    <div class="max-w-6xl mx-auto">
+      <div class="bg-black/40 backdrop-blur-md rounded-3xl p-6 border border-purple-500/20">
+        <div class="flex items-center gap-4 mb-6 pb-6 border-b border-purple-500/20">
+          <div class="text-6xl" id="agentIcon">🔮</div>
+          <div>
+            <h2 class="text-3xl font-bold" id="agentName">Agente Místico</h2>
+            <p class="text-gray-400" id="agentDescription">Descripción</p>
+            <p class="text-sm text-purple-400" id="agentCost">Costo: 10 créditos</p>
+          </div>
+        </div>
+        
+        <div id="chatMessages" class="space-y-4 mb-6 h-[500px] overflow-y-auto p-4 bg-black/20 rounded-2xl">
+          <div class="text-center text-gray-500 py-8">
+            <div class="text-6xl mb-4">🔮</div>
+            <p class="text-lg">Selecciona un agente para comenzar</p>
+          </div>
+        </div>
+        
+        <div class="flex gap-3">
+          <input 
+            type="text" 
+            id="userInput"
+            placeholder="Escribe tu pregunta mística..." 
+            class="flex-1 px-6 py-4 rounded-2xl bg-black/40 border border-purple-500/30 focus:border-purple-500 focus:outline-none text-white placeholder-gray-500"
+          />
+          <button 
+            id="sendBtn"
+            class="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 px-8 py-4 rounded-2xl font-bold transition-all"
+          >
+            ✨ Enviar
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN PLANES -->
+  <section id="plansSection" class="hidden container mx-auto px-4 py-12">
+    <div class="text-center mb-16">
+      <h2 class="text-5xl font-bold mb-6 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+        Planes de Créditos Místicos
+      </h2>
+      <p class="text-xl text-gray-300">Elige el plan que mejor se adapte a tu búsqueda espiritual</p>
+    </div>
+    
+    <div id="plansContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+      <!-- Planes se renderizan aquí -->
+    </div>
+  </section>
+
+  <!-- SECCIÓN ADMIN -->
+  <section id="adminSection" class="hidden container mx-auto px-4 py-12">
+    <div class="text-center mb-12">
+      <h2 class="text-4xl font-bold mb-4">Panel de Administrador</h2>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div class="bg-black/40 backdrop-blur-md rounded-2xl p-6 border border-purple-500/20">
+        <div class="text-3xl mb-2">👥</div>
+        <div class="text-3xl font-bold text-purple-400" id="totalUsers">0</div>
+        <div class="text-gray-400">Total Usuarios</div>
+      </div>
+      
+      <div class="bg-black/40 backdrop-blur-md rounded-2xl p-6 border border-purple-500/20">
+        <div class="text-3xl mb-2">💰</div>
+        <div class="text-3xl font-bold text-green-400" id="totalCredits">0</div>
+        <div class="text-gray-400">Total Ingresos</div>
+      </div>
+      
+      <div class="bg-black/40 backdrop-blur-md rounded-2xl p-6 border border-purple-500/20">
+        <div class="text-3xl mb-2">⚡</div>
+        <div class="text-3xl font-bold text-blue-400" id="activeUsers">0</div>
+        <div class="text-gray-400">Usuarios Activos</div>
+      </div>
+    </div>
+    
+    <div class="bg-black/40 backdrop-blur-md rounded-2xl p-6 border border-purple-500/20 overflow-x-auto">
+      <table class="w-full">
+        <thead>
+          <tr class="border-b border-purple-500/20">
+            <th class="text-left py-4 px-6">Usuario</th>
+            <th class="text-left py-4 px-6">Créditos</th>
+            <th class="text-left py-4 px-6">Plan</th>
+            <th class="text-center py-4 px-6">Verificado</th>
+            <th class="text-right py-4 px-6">Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="usersTable">
+          <!-- Usuarios se renderizan aquí -->
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- MODAL AUTH -->
+  <div id="authModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div class="bg-gradient-to-br from-slate-900 to-purple-900 rounded-3xl p-8 max-w-md w-full border border-purple-500/20">
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="text-2xl font-bold">Autenticación</h3>
+        <button id="closeAuthModal" class="text-3xl hover:text-purple-400">×</button>
+      </div>
+      
+      <div id="loginForm">
+        <form id="loginFormElement" class="space-y-4">
+          <input type="email" id="loginEmail" placeholder="Email" required
+            class="w-full px-4 py-3 rounded-lg bg-black/40 border border-purple-500/30 focus:border-purple-500 focus:outline-none" />
+          <input type="password" id="loginPassword" placeholder="Contraseña" required
+            class="w-full px-4 py-3 rounded-lg bg-black/40 border border-purple-500/30 focus:border-purple-500 focus:outline-none" />
+          <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 py-3 rounded-lg font-bold">
+            Iniciar Sesión
+          </button>
+          <button type="button" onclick="toggleForm()" class="w-full bg-gray-700 hover:bg-gray-600 py-3 rounded-lg font-bold">
+            Crear Cuenta
+          </button>
+        </form>
+      </div>
+      
+      <div id="registerForm" class="hidden">
+        <form id="registerFormElement" class="space-y-4">
+          <input type="text" id="registerName" placeholder="Nombre" required
+            class="w-full px-4 py-3 rounded-lg bg-black/40 border border-purple-500/30 focus:border-purple-500 focus:outline-none" />
+          <input type="email" id="registerEmail" placeholder="Email" required
+            class="w-full px-4 py-3 rounded-lg bg-black/40 border border-purple-500/30 focus:border-purple-500 focus:outline-none" />
+          <input type="password" id="registerPassword" placeholder="Contraseña (mín. 6 caracteres)" required minlength="6"
+            class="w-full px-4 py-3 rounded-lg bg-black/40 border border-purple-500/30 focus:border-purple-500 focus:outline-none" />
+          <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 py-3 rounded-lg font-bold">
+            Crear Cuenta
+          </button>
+          <button type="button" onclick="toggleForm()" class="w-full bg-gray-700 hover:bg-gray-600 py-3 rounded-lg font-bold">
+            Volver al Login
+          </button>
+        </form>
+  

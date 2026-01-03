@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CambiaTuYo - Portal Místico</title>
+  <meta name="description" content="Tu portal místico con 11 agentes especializados en artes adivinatorias, astrología y transformación personal">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
+    
+    body { 
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    h1, h2, h3 { font-family: 'Cinzel', serif; }
+    .agent-card:hover { transform: translateY(-5px); transition: 0.3s; }
+    
+    main {
+      flex: 1;
+    }
+    
+    /* Animación de hover en enlaces del footer */
+    footer a {
+      position: relative;
+    }
+    
+    footer a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(to right, #a855f7, #ec4899);
+      transition: width 0.3s ease;
+    }
+    
+    footer a:hover::after {
+      width: 100%;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
+  
+  <!-- ========================================
+       HEADER
+       ======================================== -->
+  <header class="bg-black/30 backdrop-blur-md border-b border-purple-500/20 sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="text-4xl">🔮</div>
+          <h1 class="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+            CambiaTuYo
+          </h1>
+        </div>
+        
+        <nav class="hidden md:flex items-center gap-6">
+          <button onclick="showSection('home')" class="hover:text-purple-400 transition-colors">Inicio</button>
+          <button onclick="showSection('plans')" class="hover:text-purple-400 transition-colors">Planes</button>
+          <button id="adminNavBtn" onclick="showSection('admin')" class="hover:text-purple-400 transition-colors hidden">Admin</button>
+        </nav>
+        
+        <div class="flex items-center gap-4">
+          <!-- Contador de créditos removido - ahora usamos sistema de planes -->
+          
+          <button id="authButton" onclick="showAuthModal('login')" class="bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-2 rounded-full font-semibold hover:from-purple-700 hover:to-pink-700 transition-all">
+            Acceder
+          </button>
+          
+          <button id="userMenuButton" class="hidden flex items-center gap-2 hover:bg-white/10 px-3 py-2 rounded-lg transition-all" onclick="toggleUserMenu()">
+            <div class="w-8 h-8 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center">
+              <span id="userInitials" class="font-bold text-sm"></span>
+            </div>
+            <span id="userName"></span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+          
+          <!-- Dropdown menú de usuario -->
+          <div id="userDropdown" class="hidden absolute top-16 right-4 bg-slate-800 rounded-lg shadow-2xl border border-purple-500/20 min-w-[200px] z-50">
+            <div class="p-2">
+              <button onclick="showSection('profile'); toggleUserMenu();" class="w-full text-left px-4 py-2 hover:bg-purple-600/20 rounded-lg">
+                ⚙️ Mi Cuenta
+              </button>
+              <button onclick="logout(); toggleUserMenu();" class="w-full text-left px-4 py-2 hover:bg-red-600/20 rounded-lg text-red-400">
+                🚪 Cerrar Sesión
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Banner de verificación de email -->
+  <div id="verificationBanner" class="hidden bg-gradient-to-r from-orange-500 to-yellow-500 text-white py-4 px-6 shadow-lg">
+    <div class="container mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="text-3xl">⚠️</div>
+        <div>
+          <div class="font-bold text-lg">¡Email no verificado!</div>
+          <div class="text-sm">Revisa tu bandeja de entrada y spam para verificar tu email</div>
+        </div>
+      </div>
+      <div class="flex gap-3">
+        <button onclick="resendVerificationEmail()" class="bg-white text-orange-600 px-6 py-2 rounded-full font-bold hover:bg-orange-50 transition-all shadow-lg">
+          📧 Reenviar Email
+        </button>
+        <button onclick="checkEmailVerified()" class="bg-orange-700 hover:bg-orange-800 px-6 py-2 rounded-full font-bold transition-all">
+          ✓ Ya verifiqué
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================
+       MAIN CONTENT
+       ======================================== -->
+  <main>
+    
+    <!-- SECCIÓN HOME -->
+    <section id="homeSection" class="container mx-auto px-4 py-12">
+      
+      <!-- Hero -->
+      <div class="text-center mb-16">
+        <h2 class="text-5xl font-bold mb-4 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
+          Tu Portal Místico Personal
+        </h2>
+        <p class="text-xl text-gray-300 max-w-2xl mx-auto">
+          Descubre tu camino con nuestros 11 agentes especializados en artes adivinatorias, 
+          astrología y guía espiritual
+        </p>
+      </div>
+
+      <!-- Grid de Agentes -->
+      <div id="agentsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <!-- Los agentes se cargarán dinámicamente desde app.js -->
+      </div>
+      
+    </section>
+
+    <!-- SECCIÓN PLANES -->
+    <section id="plansSection" class="hidden container mx-auto px-4 py-12">
+      <div class="text-center mb-12">
+        <h2 class="text-4xl font-bold mb-4">Elige tu Plan Místico</h2>
+        <p class="text-gray-400">Desbloquea todo el potencial de las artes místicas</p>
+      </div>
+
+      <!-- Grid de planes se carga dinámicamente -->
+      <div id="plansGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+        <!-- Los planes se cargarán desde app.js -->
+      </div>
+    </section>
+
+    <!-- SECCIÓN ADMIN -->
+<section id="adminSection" class="hidden container mx-auto px-4 py-12">
+  <div class="bg-gradient-to-br from-slate-800 to-purple-900 rounded-3xl p-8 border border-purple-500/20">
+    <div class="flex justify-between items-center mb-8">
+      <h2 class="text-3xl font-bold">Panel de Administración</h2>
+      <button onclick="exportEmails()" class="bg-green-600 hover:bg-green-700 px-6 py-2 rounded-lg font-bold transition-all">
+        📧 Exportar Emails
+      </button>
+    </div>
+    
+    <!-- Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div class="bg-purple-600/20 p-6 rounded-xl border border-purple-500/20">
+        <div class="text-3xl mb-2">👥</div>
+        <div class="text-gray-400 text-sm">Total Usuarios</div>
+        <div class="text-3xl font-bold" id="totalUsers">0</div>
+      </div>
+      <div class="bg-purple-600/20 p-6 rounded-xl border border-purple-500/20">
+        <div class="text-3xl mb-2">💬</div>
+        <div class="text-gray-400 text-sm">Total Consultas</div>
+        <div class="text-3xl font-bold" id="totalConsultations">0</div>
+      </div>
+      <div class="bg-purple-600/20 p-6 rounded-xl border border-purple-500/20">
+        <div class="text-3xl mb-2">💰</div>
+        <div class="text-gray-400 text-sm">Ingresos Mensuales</div>
+        <div class="text-3xl font-bold" id="totalCredits">€0</div>
+      </div>
+      <div class="bg-purple-600/20 p-6 rounded-xl border border-purple-500/20">
+        <div class="text-3xl mb-2">📊</div>
+        <div class="text-gray-400 text-sm">Usuarios Activos</div>
+        <div class="text-3xl font-bold" id="activeUsers">0</div>
+      </div>
+    </div>
+
+    <!-- Tabla de usuarios -->
+    <div class="overflow-x-auto">
+      <table class="w-full">
+        <thead>
+          <tr class="border-b border-purple-500/20">
+            <th class="py-3 px-6 text-left">Usuario</th>
+            <th class="py-3 px-6 text-center">Plan</th>
+            <th class="py-3 px-6 text-center">Consultas</th>
+            <th class="py-3 px-6 text-left">Agentes Bonus</th>
+            <th class="py-3 px-6 text-center">Verificado</th>
+            <th class="py-3 px-6 text-right">Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="usersTable">
+          <!-- Se llena dinámicamente -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+    <!-- SECCIÓN CHAT -->
+    <section id="chatSection" class="hidden fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div class="bg-gradient-to-br from-slate-900 to-purple-900 rounded-3xl border border-purple-500/20 w-full max-w-4xl h-[80vh] flex flex-col">
+        
+        <!-- Header del chat -->
+        <div class="p-6 border-b border-purple-500/20 flex justify-between items-center">
+          <div class="flex items-center gap-4">
+            <div class="text-5xl" id="chatAgentIcon">🔮</div>
+            <div>
+              <h3 class="text-2xl font-bold" id="chatAgentName">Agente</h3>
+              <p class="text-gray-400 text-sm" id="chatAgentRole">Especialista</p>
+            </div>
+          </div>
+          <button onclick="closeChat()" class="text-3xl hover:text-purple-400 transition-colors">×</button>
+        </div>
+
+        <!-- Mensajes -->
+        <div id="chatMessages" class="flex-1 overflow-y-auto p-6 space-y-4">
+          <!-- Los mensajes se agregan dinámicamente -->
+        </div>
+
+        <!-- Input -->
+        <div class="p-6 border-t border-purple-500/20">
+          <form id="chatForm" class="flex gap-3">
+            <input 
+              type="text" 
+              id="messageInput" 
+              placeholder="Escribe tu pregunta..."
+              class="flex-1 bg-black/40 border border-purple-500/30 rounded-full px-6 py-3 focus:outline-none focus:border-purple-500"
+              autocomplete="off"
+            />
+            <button type="submit" class="bg-gradient-to-r from-purple-600 to-pink-600 px-8 py-3 rounded-full font-bold hover:from-purple-700 hover:to-pink-700 transition-all">
+              Enviar
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN PERFIL -->
+    <section id="profileSection" class="hidden container mx-auto px-4 py-12">
+      <div class="max-w-2xl mx-auto">
+        <div class="bg-gradient-to-br from-slate-800 to-purple-900 rounded-3xl p-8 border border-purple-500/20">
+          <h2 class="text-3xl font-bold mb-8">Mi Cuenta</h2>
+          
+          <div class="space-y-6">
+            <!-- Info del usuario -->
+            <div class="bg-purple-500/10 rounded-lg p-4">
+              <h3 class="font-bold mb-2 text-purple-400">Información Personal</h3>
+              <div class="space-y-2 text-sm">
+                <div><strong>Email:</strong> <span id="profileEmail"></span></div>
+                <div><strong>Nombre:</strong> <span id="profileName"></span></div>
+                <div><strong>Plan:</strong> <span id="profilePlan"></span></div>
+              </div>
+            </div>
+
+            <!-- Ayuda y soporte -->
+            <div class="bg-purple-500/10 rounded-lg p-4 border border-purple-500/20">
+              <h3 class="font-bold mb-2">¿Necesitas ayuda?</h3>
+              <p class="text-sm text-gray-400 mb-3">
+                Nuestro equipo está aquí para ayudarte
+              </p>
+              <div class="space-y-2">
+                <a href="/cdn-cgi/l/email-protection#40292e262f0023212d2229213435392f6e2533" class="block text-purple-400 hover:text-purple-300 text-sm">
+                  📧 <span class="__cf_email__" data-cfemail="60090e060f2003010d0209011415190f4e0513">[email&#160;protected]</span>
+                </a>
+                <a href="https://cambiatuyo.es/soporte" 
+                   target="_blank"
+                   class="block text-purple-400 hover:text-purple-300 text-sm">
+                  💬 Centro de ayuda
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================
+       FOOTER CON ENLACES
+       ======================================== -->
+  <footer class="bg-gradient-to-b from-transparent to-black/50 border-t border-purple-500/20 mt-20">
+    <div class="container mx-auto px-4 py-12">
+      
+      <!-- Grid principal -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        
+        <!-- Columna 1: Logo y descripción -->
+        <div class="md:col-span-2">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="text-4xl">🔮</div>
+            <h3 class="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+              CambiaTuYo
+            </h3>
+          </div>
+          <p class="text-gray-400 mb-4 max-w-md">
+            Tu portal místico con 11 agentes especializados en artes adivinatorias, 
+            astrología, guía espiritual y transformación personal.
+          </p>
+          <div class="flex gap-4">
+            <a href="https://cambiatuyo.es" 
+               target="_blank"
+               class="text-purple-400 hover:text-purple-300 transition-colors flex items-center gap-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path>
+              </svg>
+              cambiatuyo.es
+            </a>
+          </div>
+        </div>
+        
+        <!-- Columna 2: Enlaces rápidos -->
+        <div>
+          <h4 class="text-lg font-bold mb-4 text-purple-400">Enlaces</h4>
+          <ul class="space-y-2">
+            <li>
+              <button onclick="showSection('home')" class="text-gray-400 hover:text-purple-300 transition-colors">
+                Agentes Místicos
+              </button>
+            </li>
+            <li>
+              <button onclick="showSection('plans')" class="text-gray-400 hover:text-purple-300 transition-colors">
+                Planes y Precios
+              </button>
+            </li>
+            <li>
+              <a href="https://cambiatuyo.es/sobre-mi" target="_blank" class="text-gray-400 hover:text-purple-300 transition-colors">
+                Sobre Nosotros
+              </a>
+            </li>
+            <li>
+              <a href="https://cambiatuyo.es/blog" target="_blank" class="text-gray-400 hover:text-purple-300 transition-colors">
+                Blog
+              </a>
+            </li>
+          </ul>
+        </div>
+        
+        <!-- Columna 3: Soporte y legal -->
+        <div>
+          <h4 class="text-lg font-bold mb-4 text-purple-400">Soporte</h4>
+          <ul class="space-y-2">
+            <li>
+              <a href="/cdn-cgi/l/email-protection#e78e898188a784868a858e8693929e88c98294" class="text-gray-400 hover:text-purple-300 transition-colors flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                </svg>
+                <span class="__cf_email__" data-cfemail="b6dfd8d0d9f6d5d7dbd4dfd7c2c3cfd998d3c5">[email&#160;protected]</span>
+              </a>
+            </li>
+            <li>
+              <button onclick="showFAQ()" class="text-gray-400 hover:text-purple-300 transition-colors">
+                Preguntas Frecuentes
+              </button>
+            </li>
+            <li>
+              <a href="https://cambiatuyo.es/politica-privacidad" target="_blank" class="text-gray-400 hover:text-purple-300 transition-colors">
+                Política de Privacidad
+              </a>
+            </li>
+            <li>
+              <a href="https://cambiatuyo.es/terminos-condiciones" target="_blank" class="text-gray-400 hover:text-purple-300 transition-colors">
+                Términos de Servicio
+              </a>
+            </li>
+          </ul>
+        </div>
+        
+      </div>
+      
+      <!-- Separador -->
+      <div class="border-t border-purple-500/20 pt-8">
+        
+        <!-- Copyright -->
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+          
+          <div class="text-gray-500 text-sm text-center md:text-left">
+            © <span id="currentYear"></span> CambiaTuYo. Todos los derechos reservados.
+          </div>
+          
+          <!-- Redes sociales -->
+          <div class="flex gap-4">
+            <a href="https://www.facebook.com/profile.php?id=61573999555334" 
+               target="_blank" 
+               rel="noopener noreferrer"
+               class="text-gray-400 hover:text-purple-400 transition-colors"
+               title="Síguenos en Facebook">
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              </svg>
+            </a>
+            <a href="https://x.com/prubiocn" 
+               target="_blank" 
+               rel="noopener noreferrer"
+               class="text-gray-400 hover:text-purple-400 transition-colors"
+               title="Síguenos en X (Twitter)">
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+              </svg>
+            </a>
+          </div>
+          
+        </div>
+        
+        <!-- Mensaje adicional -->
+        <div class="text-center mt-6 text-gray-500 text-xs">
+          <p>
+            ✨ Hecho con amor y magia en España 🇪🇸 | 
+            <a href="/cdn-cgi/l/email-protection#a7cec9c1c8e7c4c6cac5cec6d3d2dec889c2d4" class="hover:text-purple-400 transition-colors">
+              ¿Necesitas ayuda? Escríbenos
+            </a>
+          </p>
+        </div>
+        
+      </div>
+      
+    </div>
+  </footer>
+
+  <!-- ========================================
+       BOTÓN DE AYUDA FLOTANTE
+       ======================================== -->
+  <button id="helpButton" 
+          onclick="showHelpModal()"
+          class="fixed bottom-6 right-6 bg-gradient-to-r from-purple-600 to-pink-600 text-white p-4 rounded-full shadow-2xl hover:shadow-purple-500/50 transition-all hover:scale-110 z-40"
+          title="Ayuda y contacto">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+    </svg>
+  </button>
+
+  <!-- ========================================
+       SCRIPTS
+       ======================================== -->
+  
+  <!-- Firebase -->
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="module" src="app.js"></script>
+
+  <!-- Funciones del footer y ayuda -->
+  <script>
+    // Modal de FAQ
+    function showFAQ() {
+      const modal = document.createElement('div');
+      modal.className = 'fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4';
+      modal.innerHTML = `
+        <div class="bg-gradient-to-br from-slate-900 to-purple-900 rounded-3xl p-8 max-w-3xl w-full border border-purple-500/20 max-h-[90vh] overflow-y-auto">
+          <div class="flex justify-between items-center mb-6">
+            <h3 class="text-2xl font-bold">❓ Preguntas Frecuentes</h3>
+            <button onclick="this.closest('.fixed').remove()" class="text-3xl hover:text-purple-400">×</button>
+          </div>
+          
+          <div class="space-y-6">
+            
+            <div class="bg-black/20 rounded-lg p-4">
+              <h4 class="font-bold text-purple-400 mb-2">¿Cómo funcionan los planes?</h4>
+              <p class="text-gray-300 text-sm">
+                Cada plan te da acceso a un conjunto de agentes místicos. Puedes cambiar o cancelar tu plan en cualquier momento.
+              </p>
+            </div>
+            
+            <div class="bg-black/20 rounded-lg p-4">
+              <h4 class="font-bold text-purple-400 mb-2">¿Puedo probar antes de pagar?</h4>
+              <p class="text-gray-300 text-sm">
+                Sí, el plan Free incluye acceso a 3 agentes básicos sin necesidad de tarjeta de crédito.
+              </p>
+            </div>
+            
+            <div class="bg-black/20 rounded-lg p-4">
+              <h4 class="font-bold text-purple-400 mb-2">¿Cómo cancelo mi suscripción?</h4>
+              <p class="text-gray-300 text-sm">
+                Ve a tu panel de usuario y haz clic en "Gestionar suscripción". Puedes cancelar en cualquier momento sin penalización.
+              </p>
+            </div>
+            
+            <div class="bg-black/20 rounded-lg p-4">
+              <h4 class="font-bold text-purple-400 mb-2">¿Mis datos están seguros?</h4>
+              <p class="text-gray-300 text-sm">
+                Absolutamente. Usamos Firebase y Stripe, servicios líderes en seguridad. Nunca almacenamos datos de tarjetas.
+              </p>
+            </div>
+            
+            <div class="bg-black/20 rounded-lg p-4">
+              <h4 class="font-bold text-purple-400 mb-2">¿Tienen más preguntas?</h4>
+              <p class="text-gray-300 text-sm">
+                Escríbenos a <a href="mailto:info@cambiatuyo.es" class="text-purple-400 hover:text-purple-300">info@cambiatuyo.es</a> 
+                y te responderemos en menos de 24 horas.
+              </p>
+            </div>
+            
+          </div>
+          
+          <div class="mt-6 text-center">
+            <button onclick="this.closest('.fixed').remove()" 
+                    class="bg-purple-600 hover:bg-purple-700 px-8 py-3 rounded-lg font-bold">
+              Cerrar
+            </button>
+          </div>
+        </div>
+      `;
+      
+      document.body.appendChild(modal);
+    }
+
+    // Modal de Ayuda
+    function showHelpModal() {
+      const modal = document.createElement('div');
+      modal.className = 'fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4';
+      modal.innerHTML = `
+        <div class="bg-gradient-to-br from-slate-900 to-purple-900 rounded-3xl p-8 max-w-2xl w-full border border-purple-500/20 max-h-[90vh] overflow-y-auto">
+          
+          <div class="flex justify-between items-center mb-6">
+            <div>
+              <h3 class="text-2xl font-bold">💬 Ayuda y Contacto</h3>
+              <p class="text-gray-400 text-sm">Estamos aquí para ayudarte</p>
+            </div>
+            <button onclick="this.closest('.fixed').remove()" class="text-3xl hover:text-purple-400">×</button>
+          </div>
+          
+          <div class="space-y-4 mb-6">
+            
+            <!-- Email -->
+            <a href="mailto:info@cambiatuyo.es" 
+               class="flex items-center gap-4 p-4 bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-lg hover:from-purple-600/30 hover:to-pink-600/30 transition-all border border-purple-500/20 hover:border-purple-500/40">
+              <div class="bg-purple-600 p-3 rounded-full">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                </svg>
+              </div>
+              <div class="flex-1">
+                <div class="font-bold">Email</div>
+                <div class="text-sm text-gray-400">info@cambiatuyo.es</div>
+                <div class="text-xs text-purple-400 mt-1">Respondemos en menos de 24h</div>
+              </div>
+              <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </a>
+            
+            <!-- Web -->
+            <a href="https://cambiatuyo.es" 
+               target="_blank"
+               class="flex items-center gap-4 p-4 bg-gradient-to-r from-blue-600/20 to-cyan-600/20 rounded-lg hover:from-blue-600/30 hover:to-cyan-600/30 transition-all border border-blue-500/20 hover:border-blue-500/40">
+              <div class="bg-blue-600 p-3 rounded-full">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path>
+                </svg>
+              </div>
+              <div class="flex-1">
+                <div class="font-bold">Sitio Web</div>
+                <div class="text-sm text-gray-400">cambiatuyo.es</div>
+                <div class="text-xs text-blue-400 mt-1">Blog, recursos y más información</div>
+              </div>
+              <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </a>
+            
+            <!-- FAQ -->
+            <button onclick="showFAQFromHelp()" 
+                    class="w-full flex items-center gap-4 p-4 bg-gradient-to-r from-green-600/20 to-emerald-600/20 rounded-lg hover:from-green-600/30 hover:to-emerald-600/30 transition-all border border-green-500/20 hover:border-green-500/40">
+              <div class="bg-green-600 p-3 rounded-full">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+              </div>
+              <div class="flex-1 text-left">
+                <div class="font-bold">Preguntas Frecuentes</div>
+                <div class="text-sm text-gray-400">Encuentra respuestas rápidas</div>
+              </div>
+              <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </button>
+            
+          </div>
+          
+          <!-- Horario de atención -->
+          <div class="bg-purple-500/10 rounded-lg p-4 mb-6 border border-purple-500/20">
+            <div class="flex items-center gap-2 mb-2">
+              <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <span class="font-semibold text-purple-400">Horario de atención</span>
+            </div>
+            <div class="text-sm text-gray-300">
+              <div>📧 Email: 24/7 (respuesta en menos de 24h)</div>
+              <div>💬 Chat en vivo: Lun-Vie 9:00 - 18:00 CET</div>
+            </div>
+          </div>
+          
+          <!-- Enlaces rápidos -->
+          <div class="grid grid-cols-2 gap-3 mb-6">
+            <a href="https://cambiatuyo.es/politica-privacidad" target="_blank" 
+               class="text-center py-2 px-4 bg-black/20 rounded-lg hover:bg-black/30 transition-all text-sm">
+              🔒 Privacidad
+            </a>
+            <a href="https://cambiatuyo.es/terminos-condiciones" target="_blank" 
+               class="text-center py-2 px-4 bg-black/20 rounded-lg hover:bg-black/30 transition-all text-sm">
+              📜 Términos
+            </a>
+          </div>
+          
+          <!-- Botón cerrar -->
+          <button onclick="this.closest('.fixed').remove()" 
+                  class="w-full bg-gray-700 hover:bg-gray-600 py-3 rounded-lg font-bold">
+            Cerrar
+          </button>
+          
+        </div>
+      `;
+      
+      document.body.appendChild(modal);
+    }
+
+    function showFAQFromHelp() {
+      document.querySelector('.fixed').remove();
+      showFAQ();
+    }
+
+    // Toggle menu de usuario
+    function toggleUserMenu() {
+      const dropdown = document.getElementById('userDropdown');
+      dropdown.classList.toggle('hidden');
+    }
+
+    // Cerrar dropdown si se hace click fuera
+    document.addEventListener('click', function(event) {
+      const userMenuButton = document.getElementById('userMenuButton');
+      const dropdown = document.getElementById('userDropdown');
+      
+      if (userMenuButton && !userMenuButton.contains(event.target) && !dropdown.contains(event.target)) {
+        dropdown.classList.add('hidden');
+      }
+    });
+  </script>
+
+  <!-- Actualizar año del copyright (al final para asegurar que el DOM esté cargado) -->
+  <script>
+    (function() {
+      var yearEl = document.getElementById('currentYear');
+      if (yearEl) {
+        yearEl.textContent = new Date().getFullYear();
+      }
+    })();
+  </script>
+
+</body>
+</html>
